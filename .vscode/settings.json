@@ -1,0 +1,14 @@
+{
+  "liveServer.settings.ignoreFiles": [
+    "**/temp_uploads/**",
+    "**/videos_storage/**",
+    ".vscode/**",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.ts"
+  ],
+  "files.watcherExclude": {
+    "**/temp_uploads/**": true,
+    "**/videos_storage/**": true
+  }
+}

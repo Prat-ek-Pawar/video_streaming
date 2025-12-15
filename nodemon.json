@@ -1,0 +1,9 @@
+{
+  "ignore": [
+    "temp_uploads/**",
+    "videos_storage/**",
+    "**/*.mp4",
+    "**/*.m3u8",
+    "**/*.ts"
+  ]
+}

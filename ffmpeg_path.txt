@@ -1,0 +1,1 @@
+C:\Users\prati\AppData\Local\Microsoft\WinGet\Packages\yt-dlp.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-N-120424-g03b9180fe3-win64-gpl/bin\ffmpeg.exe

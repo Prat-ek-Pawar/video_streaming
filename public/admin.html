@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Success Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --success: #10b981;
+            --danger: #ef4444;
+            --glass: rgba(30, 41, 59, 0.7);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 20%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.05em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .file-upload {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: opacity 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Client List Styles */
+        .client-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .client-item {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .client-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .client-key {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        
+        .client-key:hover {
+            color: var(--accent);
+        }
+
+        .copy-hint {
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-left: 0.5rem;
+        }
+
+        /* Status & Notifications */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-error { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1rem;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            width: 0%;
+            transition: width 0.2s;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Admin</h1>
+            <div style="font-size: 0.9rem; color: var(--text-secondary)">
+                v1.1.2 &bullet; Production Ready
+            </div>
+        </header>
+
+        <div class="grid">
+            <!-- Upload Section -->
+            <div class="card">
+                <h2>Upload Video</h2>
+                <form id="uploadForm" onsubmit="event.preventDefault()">
+                    <div class="form-group">
+                        <label for="clientName">Client Name</label>
+                        <input type="text" id="clientName" name="clientName" placeholder="e.g. Acme Corp" list="clientSuggestions" required autocomplete="off">
+                        <datalist id="clientSuggestions"></datalist>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orientation">Orientation</label>
+                        <select id="orientation" name="orientation" required>
+                            <option value="landscape">Landscape (16:9)</option>
+                            <option value="portrait">Portrait (9:16)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Video Title (Optional)</label>
+                        <input type="text" id="title" name="title" placeholder="e.g. Homepage Background">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="videoFile">Video File</label>
+                        <div class="file-upload">
+                            <input type="file" id="videoFile" name="video" accept="video/*" required onchange="updateFileName(this)">
+                            <div id="fileNameDisplay">
+                                <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">☁️</span>
+                                Click or Drag to Upload Video
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Button Type "button" prevents form submit reload -->
+                    <button type="button" class="btn" id="uploadBtn" onclick="handleUpload()">Upload Video</button>
+                    
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0% Uploaded</div>
+
+                    <div id="uploadStatus"></div>
+                </form>
+            </div>
+
+            <!-- Clients List Section -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin-bottom: 0">Active Clients</h2>
+                    <button onclick="fetchClients()" style="background: none; border: 1px solid var(--border); color: var(--text-secondary); padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer;">Refresh</button>
+                </div>
+                
+                <div id="clientsList" class="client-list">
+                    <!-- Clients will be injected here -->
+                    <div style="text-align: center; color: #94a3b8; padding: 2rem;">Loading clients...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DYNAMIC API BASE URL
+        const API_BASE = 'http://localhost:3000/api';
+
+        // --- Utils ---
+        function showStatus(message, type = 'info') {
+            if(window.location.port !== '3000' && window.location.hostname === 'localhost') {
+                 console.warn('⚠️ YOU SEEM TO BE USING LIVE SERVER OR A DIFFERENT PORT. PLEASE USE http://localhost:3000/admin.html');
+                 // Optional: Alert user
+                 // alert('Please access this page via http://localhost:3000/admin.html to avoid issues.');
+            }
+            const el = document.getElementById('uploadStatus');
+            if(el) {
+                el.style.display = 'block';
+                el.innerHTML = message;
+                
+                if (type === 'error') {
+                    el.style.borderLeft = '4px solid #ef4444';
+                    el.style.color = '#fea5a5';
+                } else if (type === 'success') {
+                    el.style.borderLeft = '4px solid #10b981';
+                    el.style.color = '#86efac';
+                } else {
+                    el.style.borderLeft = '4px solid #3b82f6';
+                    el.style.color = '#f8fafc';
+                }
+            }
+        }
+
+        function updateFileName(input) {
+            const display = document.getElementById('fileNameDisplay');
+            if (input.files && input.files[0]) {
+                display.innerHTML = `<strong>${input.files[0].name}</strong><br><span style="font-size: 0.8rem; color: #94a3b8">${(input.files[0].size / 1024 / 1024).toFixed(2)} MB</span>`;
+            } else {
+                display.innerHTML = '<span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">☁️</span>Click or Drag to Upload Video';
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Public ID copied: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy keys', err);
+                prompt("Copy this ID:", text);
+            });
+        }
+
+        // --- API Calls ---
+
+        async function fetchClients() {
+            const listEl = document.getElementById('clientsList');
+            const dataList = document.getElementById('clientSuggestions');
+            
+            if(listEl) listEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 2rem;">Loading clients...</div>';
+
+            try {
+                console.log(`Fetching clients from ${API_BASE}/clients`);
+                const res = await fetch(`${API_BASE}/clients`);
+                if (!res.ok) throw new Error(`API Error: ${res.statusText}`);
+                const clients = await res.json();
+                console.log('Clients loaded:', clients);
+
+                // Update List
+                if (listEl) {
+                    if (clients.length === 0) {
+                        listEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 2rem;">No clients found. Upload a video to create one.</div>';
+                    } else {
+                        listEl.innerHTML = clients.map(client => `
+                            <div class="client-item">
+                                <div class="client-info">
+                                    <h3>${client.name}</h3>
+                                    <div class="client-key" onclick="copyToClipboard('${client.publicKey}')" title="Click to copy">
+                                        ID: ${client.publicKey}
+                                        <span class="copy-hint">📋</span>
+                                    </div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: #94a3b8">
+                                    ${new Date(client.createdAt).toLocaleDateString()}
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+
+                // Update Datalist
+                if (dataList) {
+                    dataList.innerHTML = clients.map(c => `<option value="${c.name}">`).join('');
+                }
+
+            } catch (err) {
+                console.error('Fetch Clients Error:', err);
+                if(listEl) {
+                    listEl.innerHTML = `<div style="color: #ef4444; text-align: center; padding: 1rem;">
+                        Error loading clients:<br>${err.message}<br>
+                        <small>Check console (F12) for details.</small>
+                    </div>`;
+                }
+            }
+        }
+
+        // --- Upload Logic (Global) ---
+        
+        async function handleUpload() {
+            console.log('handleUpload triggered');
+            
+            const form = document.getElementById('uploadForm');
+            const btn = document.getElementById('uploadBtn');
+            const fileInput = document.getElementById('videoFile');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            // Validate inputs manually
+            const clientNameInput = document.getElementById('clientName');
+            if(!clientNameInput.value) {
+                showStatus('Please enter a Client Name', 'error');
+                clientNameInput.focus();
+                return;
+            }
+            
+            if (!fileInput.files[0]) {
+                showStatus('Please select a video file', 'error');
+                return;
+            }
+
+            const formData = new FormData(form);
+
+            // UI State: Uploading
+            if(btn) {
+                btn.disabled = true;
+                btn.innerText = 'Uploading...';
+            }
+            if(progressContainer) progressContainer.style.display = 'block';
+            if(progressText) progressText.style.display = 'block';
+            if(progressBar) progressBar.style.width = '0%';
+            if(progressText) progressText.innerText = '0% Uploaded';
+            
+            showStatus('Starting upload... please wait.', 'info');
+
+            // Use XMLHttpRequest for Progress tracking
+            const xhr = new XMLHttpRequest();
+            
+            // Upload Progress
+            xhr.upload.addEventListener('progress', (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    const percentStr = percentComplete.toFixed(0) + '%';
+                    if(progressBar) progressBar.style.width = percentStr;
+                    if(progressText) progressText.innerText = percentStr + ' Uploaded';
+                    console.log('Progress:', percentStr);
+                    
+                    if (percentComplete >= 100) {
+                        if(btn) btn.innerText = 'Processing...';
+                        if(progressText) progressText.innerText = 'Upload Complete. Processing on server...';
+                    }
+                }
+            });
+
+            xhr.addEventListener('load', () => {
+                console.log('XHR Load:', xhr.status, xhr.responseText);
+                
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        showStatus(`
+                            <strong>Success!</strong> Video is processing.<br><br>
+                            Video ID: <code>${data.videoId}</code><br>
+                            Client ID: <code>${data.clientPublicKey}</code><br>
+                            <a href="${data.masterPlaylistUrl}" target="_blank" style="color: #3b82f6">Master Playlist URL</a>
+                        `, 'success');
+                        
+                        // Reset
+                        form.reset();
+                        updateFileName(fileInput); 
+                        setTimeout(() => {
+                            if(progressContainer) progressContainer.style.display = 'none';
+                            if(progressText) progressText.style.display = 'none';
+                            if(progressBar) progressBar.style.width = '0%';
+                        }, 5000);
+                        fetchClients();
+
+                    } catch (parseErr) {
+                        console.error('JSON Parse Error', parseErr);
+                        showStatus('Server returned invalid JSON response', 'error');
+                    }
+                } else {
+                    // Error
+                    let errMsg = `Upload failed (Status: ${xhr.status})`;
+                    try {
+                        const errData = JSON.parse(xhr.responseText);
+                        if(errData.error) errMsg = errData.error;
+                        else if(errData.message) errMsg = errData.message;
+                    } catch(e) {
+                         // If not JSON, probably HTML error page
+                        if (xhr.responseText) {
+                            const snippet = xhr.responseText.substring(0, 100).replace(/<[^>]*>?/gm, ''); // strip html
+                            errMsg += ` - Response: ${snippet}...`;
+                        }
+                    }
+                    showStatus(`Error: ${errMsg}`, 'error');
+                    console.error('Upload Error:', xhr.status, xhr.responseText);
+                }
+                
+                // Cleanup
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Upload Video';
+                }
+            });
+
+            xhr.addEventListener('error', () => {
+                console.error('XHR Error Event');
+                showStatus('Network Error - Check if server is running and accessible', 'error');
+                if(btn) {
+                    btn.disabled = false;
+                    btn.innerText = 'Upload Video';
+                }
+            });
+
+            try {
+                xhr.open('POST', `${API_BASE}/videos/upload`);
+                xhr.send(formData);
+                console.log('XHR Sent');
+            } catch(e) {
+                console.error('XHR Exception', e);
+                showStatus('Error sending request: ' + e.message, 'error');
+                if(btn) btn.disabled = false;
+            }
+        }
+        console.log('Script loaded');
+        fetchClients();
+    </script>
+</body>
+</html>
