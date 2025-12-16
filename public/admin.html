@@ -338,15 +338,10 @@
 
     <script>
         // DYNAMIC API BASE URL
-        const API_BASE = 'http://localhost:3000/api';
+        const API_BASE = 'http://api.thedigitechsolutions.com/api';
 
         // --- Utils ---
         function showStatus(message, type = 'info') {
-            if(window.location.port !== '3000' && window.location.hostname === 'localhost') {
-                 console.warn('⚠️ YOU SEEM TO BE USING LIVE SERVER OR A DIFFERENT PORT. PLEASE USE http://localhost:3000/admin.html');
-                 // Optional: Alert user
-                 // alert('Please access this page via http://localhost:3000/admin.html to avoid issues.');
-            }
             const el = document.getElementById('uploadStatus');
             if(el) {
                 el.style.display = 'block';

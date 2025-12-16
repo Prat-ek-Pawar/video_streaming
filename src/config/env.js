@@ -15,7 +15,7 @@ export const config = {
   videoRootAbsolute: process.env.VIDEO_ROOT_ABSOLUTE || path.resolve(process.cwd(), 'videos_storage'),
   
   // Public URL base
-  publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://localhost:3000/videos-static',
+  publicBaseUrl: process.env.PUBLIC_BASE_URL || 'http://api.thedigitechsolutions.com/videos-static',
   
   // FFMPEG
   // Use environment variable if set, otherwise fallback to the static binary which works everywhere

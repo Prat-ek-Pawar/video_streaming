@@ -57,19 +57,23 @@ export const transcodeVideo = async (sourcePath, outputDir) => {
   const filterComplex = `[0:v]split=3[v1][v2][v3];[v1]scale=-2:240[o1];[v2]scale=-2:480[o2];[v3]scale=-2:720[o3]`;
   
   const cmdArgs = [
+    '-loglevel', 'error',
     '-i', sourcePath,
     '-filter_complex', filterComplex,
     
     '-map', '[o1]',
     '-c:v:0', 'libx264', '-b:v:0', '400k', '-maxrate:v:0', '450k', '-bufsize:v:0', '800k',
+    '-preset', 'veryfast',
     '-g', '48', '-keyint_min', '48', '-sc_threshold', '0',
     
     '-map', '[o2]',
     '-c:v:1', 'libx264', '-b:v:1', '1000k', '-maxrate:v:1', '1200k', '-bufsize:v:1', '2000k',
+    '-preset', 'veryfast',
     '-g', '48', '-keyint_min', '48', '-sc_threshold', '0',
     
     '-map', '[o3]',
     '-c:v:2', 'libx264', '-b:v:2', '2500k', '-maxrate:v:2', '3000k', '-bufsize:v:2', '5000k',
+    '-preset', 'veryfast',
     '-g', '48', '-keyint_min', '48', '-sc_threshold', '0',
     
     '-map', '0:a', '-c:a:0', 'aac', '-b:a:0', '96k',
