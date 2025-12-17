@@ -26,10 +26,7 @@ app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
-
-// Basic Rate Limiting (Simple implementation)
-// ... (keep existing rate limit code if possible, or just re-insert it if I am replacing a block) ...
-// For a production app, use 'express-rate-limit' or Nginx
+x
 const rateLimitWindow = new Map();
 const RATE_LIMIT_WINDOW_MS = 60000;
 const MAX_REQUESTS = 100;
