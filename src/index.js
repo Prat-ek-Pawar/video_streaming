@@ -6,13 +6,10 @@ import videoRoutes from './routes/videos.js';
 import clientRoutes from './routes/clients.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
-// Initialize App
 const app = express();
 
-// Connect Database
 connectDB();
 
-// Middlewares
 const corsOptions = {
   origin: '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -22,11 +19,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // Removed to prevent PathError on newer Express versions
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
-// Debug Logger
 app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
@@ -55,24 +50,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes (Moved before static files)
 app.use('/api/videos', videoRoutes);
 app.use('/api/clients', clientRoutes);
 
-// Serve static videos for local testing/development
-// Matches the PUBLIC_BASE_URL path in .env
 app.use('/videos-static', express.static(config.videoRootAbsolute));
 
-// Serve Admin UI and other static assets
 app.use(express.static('public'));
 
-// Health check
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-// Error Handling
 app.use(errorHandler);
 
-// Start Server
 app.listen(config.port, () => {
   console.log(`Server running on port ${config.port} | PID: ${process.pid}`);
   console.log(`Environment: Node ${process.version}`);

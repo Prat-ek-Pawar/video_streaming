@@ -182,7 +182,7 @@
             cursor: not-allowed;
         }
 
-        /* Client List Styles */
+
         .client-list {
             display: flex;
             flex-direction: column;
@@ -227,7 +227,7 @@
             margin-left: 0.5rem;
         }
 
-        /* Status & Notifications */
+
         .status-badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -239,7 +239,7 @@
         .status-success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
         .status-error { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
-        /* Progress Bar */
+
         .progress-container {
             margin-top: 1rem;
             height: 8px;
@@ -290,7 +290,7 @@
         </header>
 
         <div class="grid">
-            <!-- Upload Section -->
+
             <div class="card">
                 <h2>Upload Video</h2>
                 <form id="uploadForm" onsubmit="event.preventDefault()">
@@ -324,7 +324,7 @@
                         </div>
                     </div>
 
-                    <!-- Button Type "button" prevents form submit reload -->
+
                     <button type="button" class="btn" id="uploadBtn" onclick="handleUpload()">Upload Video</button>
                     
                     <div class="progress-container" id="progressContainer">
@@ -336,7 +336,7 @@
                 </form>
             </div>
 
-            <!-- Clients List Section -->
+
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h2 style="margin-bottom: 0">Active Clients</h2>
@@ -344,7 +344,7 @@
                 </div>
                 
                 <div id="clientsList" class="client-list">
-                    <!-- Clients will be injected here -->
+
                     <div style="text-align: center; color: #94a3b8; padding: 2rem;">Loading clients...</div>
                 </div>
             </div>
@@ -352,10 +352,10 @@
     </div>
 
     <script>
-        // DYNAMIC API BASE URL
+
         const API_BASE = 'http://13.200.246.130:3000/api';
 
-        // --- Utils ---
+
         function showStatus(message, type = 'info') {
             const el = document.getElementById('uploadStatus');
             if(el) {
@@ -393,7 +393,7 @@
             });
         }
 
-        // --- API Calls ---
+
 
         async function fetchClients() {
             const listEl = document.getElementById('clientsList');
@@ -408,7 +408,7 @@
                 const clients = await res.json();
                 console.log('Clients loaded:', clients);
 
-                // Update List
+
                 if (listEl) {
                     if (clients.length === 0) {
                         listEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 2rem;">No clients found. Upload a video to create one.</div>';
@@ -440,7 +440,7 @@
                     }
                 }
 
-                // Update Datalist
+
                 if (dataList) {
                     dataList.innerHTML = clients.map(c => `<option value="${c.name}">`).join('');
                 }
@@ -456,7 +456,7 @@
             }
         }
 
-        // --- Upload Logic (Global) ---
+
         
         async function handleUpload() {
             console.log('handleUpload triggered');
@@ -468,7 +468,7 @@
             const progressBar = document.getElementById('progressBar');
             const progressText = document.getElementById('progressText');
             
-            // Validate inputs manually
+
             const clientNameInput = document.getElementById('clientName');
             if(!clientNameInput.value) {
                 showStatus('Please enter a Client Name', 'error');
@@ -483,7 +483,7 @@
 
             const formData = new FormData(form);
 
-            // UI State: Uploading
+
             if(btn) {
                 btn.disabled = true;
                 btn.innerText = 'Uploading...';
@@ -495,10 +495,10 @@
             
             showStatus('Starting upload... please wait.', 'info');
 
-            // Use XMLHttpRequest for Progress tracking
+
             const xhr = new XMLHttpRequest();
             
-            // Upload Progress
+
             xhr.upload.addEventListener('progress', (event) => {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
@@ -536,10 +536,10 @@
                             </div>
                         `, 'success');
                         
-                        // Start polling
+
                         pollVideoStatus(data.videoId);
                         
-                        // Reset
+
                         form.reset();
                         updateFileName(fileInput); 
                         setTimeout(() => {
@@ -554,14 +554,14 @@
                         showStatus('Server returned invalid JSON response', 'error');
                     }
                 } else {
-                    // Error
+
                     let errMsg = `Upload failed (Status: ${xhr.status})`;
                     try {
                         const errData = JSON.parse(xhr.responseText);
                         if(errData.error) errMsg = errData.error;
                         else if(errData.message) errMsg = errData.message;
                     } catch(e) {
-                         // If not JSON, probably HTML error page
+
                         if (xhr.responseText) {
                             const snippet = xhr.responseText.substring(0, 100).replace(/<[^>]*>?/gm, ''); // strip html
                             errMsg += ` - Response: ${snippet}...`;
@@ -571,7 +571,7 @@
                     console.error('Upload Error:', xhr.status, xhr.responseText);
                 }
                 
-                // Cleanup
+
                 if(btn) {
                     btn.disabled = false;
                     btn.innerText = 'Upload Video';
@@ -599,7 +599,7 @@
         }
         async function copyLatestLink(publicKey, orientation) {
             try {
-                // Prevent bubbling if inside another click handler
+
                 if(event) event.stopPropagation();
 
                 showStatus(`Fetching latest ${orientation} video...`, 'info');
@@ -612,7 +612,7 @@
                     return;
                 }
                 
-                // Videos are sorted by createdAt -1 (newest first) in backend
+
                 const latestVideo = videos[0];
                 const url = latestVideo.masterPlaylistUrl;
                 
@@ -636,7 +636,7 @@
             const check = async () => {
                 try {
                     const res = await fetch(`${API_BASE}/videos/status/${videoId}`);
-                    if (!res.ok) return; // Keep trying?
+                    if (!res.ok) return;
                     
                     const data = await res.json();
                     console.log('Poll status:', data);
@@ -652,16 +652,16 @@
                             const a = linkDiv.querySelector('a');
                             if(a) a.href = data.masterPlaylistUrl;
                         }
-                        return; // Stop polling
+                        return;
                     } else if (data.status === 'failed') {
                         if(statusSpan) {
                             statusSpan.innerText = 'Failed: ' + (data.lastError || 'Unknown error');
                             statusSpan.style.color = '#ef4444';
                         }
-                        return; // Stop polling
+                        return;
                     }
                     
-                    // Keep polling
+
                     setTimeout(check, checkInterval);
                 } catch (e) {
                     console.error('Poll error', e);
