@@ -263,6 +263,21 @@
             margin-top: 0.5rem;
             display: none;
         }
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+        .btn-sm:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
     </style>
 </head>
 <body>
@@ -399,7 +414,7 @@
                         listEl.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 2rem;">No clients found. Upload a video to create one.</div>';
                     } else {
                         listEl.innerHTML = clients.map(client => `
-                            <div class="client-item">
+                            <div class="client-item" style="flex-wrap: wrap; gap: 1rem;">
                                 <div class="client-info">
                                     <h3>${client.name}</h3>
                                     <div class="client-key" onclick="copyToClipboard('${client.publicKey}')" title="Click to copy">
@@ -407,7 +422,17 @@
                                         <span class="copy-hint">📋</span>
                                     </div>
                                 </div>
-                                <div style="font-size: 0.8rem; color: #94a3b8">
+                                
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <button class="btn-sm" onclick="copyLatestLink('${client.publicKey}', 'portrait')">
+                                        📱 Portrait Link
+                                    </button>
+                                    <button class="btn-sm" onclick="copyLatestLink('${client.publicKey}', 'landscape')">
+                                        💻 Landscape Link
+                                    </button>
+                                </div>
+
+                                <div style="font-size: 0.8rem; color: #94a3b8; margin-left: auto;">
                                     ${new Date(client.createdAt).toLocaleDateString()}
                                 </div>
                             </div>
@@ -572,6 +597,37 @@
                 if(btn) btn.disabled = false;
             }
         }
+        async function copyLatestLink(publicKey, orientation) {
+            try {
+                // Prevent bubbling if inside another click handler
+                if(event) event.stopPropagation();
+
+                showStatus(`Fetching latest ${orientation} video...`, 'info');
+                const res = await fetch(`${API_BASE}/videos/${publicKey}/${orientation}`);
+                if (!res.ok) throw new Error('Failed to fetch videos');
+                const videos = await res.json();
+                
+                if (videos.length === 0) {
+                    showStatus(`⚠️ No ${orientation} videos found for this client.`, 'error');
+                    return;
+                }
+                
+                // Videos are sorted by createdAt -1 (newest first) in backend
+                const latestVideo = videos[0];
+                const url = latestVideo.masterPlaylistUrl;
+                
+                await navigator.clipboard.writeText(url);
+                showStatus(`
+                    <strong>Link Copied! ✅</strong><br>
+                    Latest ${orientation} video URL is in your clipboard.
+                `, 'success');
+                
+            } catch (err) {
+                console.error(err);
+                showStatus('Error fetching video link: ' + err.message, 'error');
+            }
+        }
+
         async function pollVideoStatus(videoId) {
             const statusSpan = document.getElementById(`videoStatus_${videoId}`);
             const linkDiv = document.getElementById(`videoLink_${videoId}`);
