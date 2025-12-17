@@ -57,6 +57,7 @@ export const processVideoUpload = async ({ clientName, orientation, originalname
 
     return {
       clientPublicKey: client.publicKey,
+      title: title || 'Untitled',
       videoId,
       orientation,
       status: 'processing',
@@ -104,6 +105,31 @@ const transcodeInBackground = async (tempPath, outputDir, video) => {
         }
     }
 };
+
+export const getVideoStatus = async (videoId) => {
+    const video = await Video.findOne({ videoId }).populate('clientId');
+    if (!video) return null;
+    
+    let masterPlaylistUrl = null;
+    if (video.status === 'ready' && video.clientId) {
+         masterPlaylistUrl = storageService.getPublicUrl(
+            video.clientId.publicKey, 
+            video.orientation, 
+            video.videoId, 
+            video.masterPlaylistPath || 'master.m3u8'
+        );
+    }
+
+    return {
+        videoId: video.videoId,
+        clientPublicKey: video.clientId ? video.clientId.publicKey : 'N/A',
+        title: video.title || 'Untitled',
+        status: video.status,
+        masterPlaylistUrl,
+        lastError: video.lastError
+    };
+};
+
 
 export const getVideosForClient = async (clientPublicKey, orientation) => {
   const client = await Client.findOne({ publicKey: clientPublicKey });

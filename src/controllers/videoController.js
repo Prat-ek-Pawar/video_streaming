@@ -30,6 +30,21 @@ export const uploadVideo = async (req, res, next) => {
   }
 };
 
+export const getVideoStatus = async (req, res, next) => {
+  try {
+    const { videoId } = req.params;
+    const status = await videoService.getVideoStatus(videoId);
+    
+    if (!status) {
+        return res.status(404).json({ error: 'Video not found' });
+    }
+
+    res.json(status);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const listVideos = async (req, res, next) => {
   try {
     const { clientPublicKey, orientation } = req.params;

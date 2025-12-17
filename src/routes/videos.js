@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.post('/upload', upload.single('video'), videoController.uploadVideo);
 
+router.get('/status/:videoId', videoController.getVideoStatus);
+
 router.get('/:clientPublicKey/:orientation', videoController.listVideos);
 
 export default router;

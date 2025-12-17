@@ -338,7 +338,7 @@
 
     <script>
         // DYNAMIC API BASE URL
-        const API_BASE = 'http://api.thedigitechsolutions.com/api';
+        const API_BASE = 'http://13.200.246.130:3000/api';
 
         // --- Utils ---
         function showStatus(message, type = 'info') {
@@ -496,11 +496,23 @@
                     try {
                         const data = JSON.parse(xhr.responseText);
                         showStatus(`
-                            <strong>Success!</strong> Video is processing.<br><br>
-                            Video ID: <code>${data.videoId}</code><br>
-                            Client ID: <code>${data.clientPublicKey}</code><br>
-                            <a href="${data.masterPlaylistUrl}" target="_blank" style="color: #3b82f6">Master Playlist URL</a>
+                            <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 0.5rem; margin-top: 0.5rem;">
+                                <div style="margin-bottom: 0.5rem;"><strong>Creating Video:</strong> <span style="color: #fff">${data.title || 'Untitled'}</span></div>
+                                <div style="font-family: monospace; font-size: 0.9rem; color: #cbd5e1;">
+                                    <div>Client ID: <span style="color: #60a5fa">${data.clientPublicKey}</span></div>
+                                    <div>Video ID: &nbsp;<span style="color: #a78bfa">${data.videoId}</span></div>
+                                </div>
+                                <div style="margin-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 0.5rem;">
+                                    Status: <span id="videoStatus_${data.videoId}" style="color: #fbbf24; font-weight: bold;">Processing... ⏳</span>
+                                </div>
+                                <div id="videoLink_${data.videoId}" style="display:none; margin-top: 10px;">
+                                    <a href="#" target="_blank" style="display: block; background: #3b82f6; color: white; text-align: center; padding: 0.5rem; border-radius: 0.5rem; text-decoration: none;">▶️ Watch Video</a>
+                                </div>
+                            </div>
                         `, 'success');
+                        
+                        // Start polling
+                        pollVideoStatus(data.videoId);
                         
                         // Reset
                         form.reset();
@@ -560,6 +572,50 @@
                 if(btn) btn.disabled = false;
             }
         }
+        async function pollVideoStatus(videoId) {
+            const statusSpan = document.getElementById(`videoStatus_${videoId}`);
+            const linkDiv = document.getElementById(`videoLink_${videoId}`);
+            const checkInterval = 2000; // 2 seconds
+            
+            const check = async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/videos/status/${videoId}`);
+                    if (!res.ok) return; // Keep trying?
+                    
+                    const data = await res.json();
+                    console.log('Poll status:', data);
+                    
+                    if (data.status === 'ready') {
+                        if(statusSpan) {
+                            statusSpan.innerText = 'Ready!';
+                            statusSpan.style.color = '#10b981';
+                            statusSpan.style.fontWeight = 'bold';
+                        }
+                        if (linkDiv) {
+                            linkDiv.style.display = 'block';
+                            const a = linkDiv.querySelector('a');
+                            if(a) a.href = data.masterPlaylistUrl;
+                        }
+                        return; // Stop polling
+                    } else if (data.status === 'failed') {
+                        if(statusSpan) {
+                            statusSpan.innerText = 'Failed: ' + (data.lastError || 'Unknown error');
+                            statusSpan.style.color = '#ef4444';
+                        }
+                        return; // Stop polling
+                    }
+                    
+                    // Keep polling
+                    setTimeout(check, checkInterval);
+                } catch (e) {
+                    console.error('Poll error', e);
+                    setTimeout(check, checkInterval);
+                }
+            };
+            
+            setTimeout(check, checkInterval);
+        }
+
         console.log('Script loaded');
         fetchClients();
     </script>
