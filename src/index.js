@@ -13,7 +13,11 @@ const app = express();
 connectDB();
 
 // Middlewares
-app.use(cors()); // Allow all origins per requirement
+app.use(cors({
+  origin: '*',
+  methods: '*',
+  allowedHeaders: '*'
+})); // Allow all origins explicitly
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
