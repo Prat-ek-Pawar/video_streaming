@@ -13,11 +13,16 @@ const app = express();
 connectDB();
 
 // Middlewares
-app.use(cors({
-  origin: '*',
-  methods: '*',
-  allowedHeaders: '*'
-})); // Allow all origins explicitly
+const corsOptions = {
+  origin: '*', 
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: '*',
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable pre-flight for all routes
 app.use(express.json({ limit: '500mb' }));
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
@@ -26,7 +31,7 @@ app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
     next();
 });
-x
+
 const rateLimitWindow = new Map();
 const RATE_LIMIT_WINDOW_MS = 60000;
 const MAX_REQUESTS = 100;
