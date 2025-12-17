@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { config } from './config/env.js';
 import { connectDB } from './db/mongoose.js';
 import videoRoutes from './routes/videos.js';
@@ -54,6 +55,10 @@ app.use('/api/videos', videoRoutes);
 app.use('/api/clients', clientRoutes);
 
 app.use('/videos-static', express.static(config.videoRootAbsolute));
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.resolve('public/admin.html'));
+});
 
 app.use(express.static('public'));
 
